@@ -1,0 +1,32 @@
+policy_module(flexnet, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+type flexnet_t;
+type flexnet_exec_t;
+init_daemon_domain(flexnet_t, flexnet_exec_t)
+
+permissive flexnet_t;
+
+########################################
+#
+# flexnet local policy
+#
+allow flexnet_t self:process { fork signal_perms };
+allow flexnet_t self:fifo_file rw_fifo_file_perms;
+allow flexnet_t self:unix_stream_socket create_stream_socket_perms;
+
+domain_use_interactive_fds(flexnet_t)
+
+files_read_etc_files(flexnet_t)
+
+auth_use_nsswitch(flexnet_t)
+
+logging_send_syslog_msg(flexnet_t)
+
+miscfiles_read_localization(flexnet_t)
+
+sysnet_dns_name_resolve(flexnet_t)

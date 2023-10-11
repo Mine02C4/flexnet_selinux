@@ -1,0 +1,1 @@
+/usr/local/bin/lmgrd		--	gen_context(system_u:object_r:flexnet_exec_t,s0)

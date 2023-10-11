@@ -1,0 +1,40 @@
+
+## <summary>policy for flexnet</summary>
+
+########################################
+## <summary>
+##	Execute flexnet_exec_t in the flexnet domain.
+## </summary>
+## <param name="domain">
+## <summary>
+##	Domain allowed to transition.
+## </summary>
+## </param>
+#
+interface(`flexnet_domtrans',`
+	gen_require(`
+		type flexnet_t, flexnet_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	domtrans_pattern($1, flexnet_exec_t, flexnet_t)
+')
+
+######################################
+## <summary>
+##	Execute flexnet in the caller domain.
+## </summary>
+## <param name="domain">
+##	<summary>
+##	Domain allowed access.
+##	</summary>
+## </param>
+#
+interface(`flexnet_exec',`
+	gen_require(`
+		type flexnet_exec_t;
+	')
+
+	corecmd_search_bin($1)
+	can_exec($1, flexnet_exec_t)
+')
