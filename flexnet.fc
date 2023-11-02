@@ -1,1 +1,4 @@
-/usr/local/bin/lmgrd		--	gen_context(system_u:object_r:flexnet_exec_t,s0)
+/usr/local/bin/lmgrd			gen_context(system_u:object_r:flexnet_exec_t,s0)
+/usr/local/bin/lmutil			gen_context(system_u:object_r:flexnet_exec_t,s0)
+/usr/local/lib/flexnet(/.*)?		gen_context(system_u:object_r:flexnet_vendor_exec_t,s0)
+/usr/local/etc/flexnet(/.*)?		gen_context(system_u:object_r:flexnet_conf_t,s0)

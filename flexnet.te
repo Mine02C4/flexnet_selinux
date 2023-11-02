@@ -7,7 +7,15 @@ policy_module(flexnet, 1.0.0)
 
 type flexnet_t;
 type flexnet_exec_t;
+type flexnet_vendor_exec_t;
+files_type(flexnet_vendor_exec_t)
+type flexnet_conf_t;
+files_type(flexnet_conf_t)
 init_daemon_domain(flexnet_t, flexnet_exec_t)
+type flexnet_tmp_t;
+files_tmp_file(flexnet_tmp_t)
+type flexnet_tmpfs_t;
+files_tmpfs_file(flexnet_tmpfs_t)
 
 permissive flexnet_t;
 
@@ -21,8 +29,6 @@ allow flexnet_t self:unix_stream_socket create_stream_socket_perms;
 
 domain_use_interactive_fds(flexnet_t)
 
-files_read_etc_files(flexnet_t)
-
 auth_use_nsswitch(flexnet_t)
 
 logging_send_syslog_msg(flexnet_t)
@@ -30,3 +36,27 @@ logging_send_syslog_msg(flexnet_t)
 miscfiles_read_localization(flexnet_t)
 
 sysnet_dns_name_resolve(flexnet_t)
+
+corenet_tcp_bind_all_unreserved_ports(flexnet_t)
+corenet_tcp_connect_all_unreserved_ports(flexnet_t)
+corenet_tcp_bind_all_ephemeral_ports(flexnet_t)
+corenet_tcp_connect_all_ephemeral_ports(flexnet_t)
+
+allow flexnet_t self:tcp_socket { accept listen };
+allow flexnet_t self:unix_stream_socket { accept };
+
+kernel_read_network_state(flexnet_t)
+storage_getattr_fuse_dev(flexnet_t)
+
+can_exec(flexnet_t, flexnet_vendor_exec_t)
+
+allow flexnet_t flexnet_conf_t:file { getattr open read };
+allow flexnet_t flexnet_conf_t:dir { open read getattr search };
+allow flexnet_t flexnet_vendor_exec_t:file { open read map };
+allow flexnet_t flexnet_vendor_exec_t:dir { search };
+files_tmp_filetrans(flexnet_t, flexnet_tmp_t, { file dir })
+manage_dirs_pattern(flexnet_t, flexnet_tmp_t, flexnet_tmp_t)
+manage_files_pattern(flexnet_t, flexnet_tmp_t, flexnet_tmp_t)
+fs_tmpfs_filetrans(flexnet_t, flexnet_tmpfs_t, { file dir })
+manage_dirs_pattern(flexnet_t, flexnet_tmpfs_t, flexnet_tmpfs_t)
+manage_files_pattern(flexnet_t, flexnet_tmpfs_t, flexnet_tmpfs_t)
