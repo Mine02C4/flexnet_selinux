@@ -45,10 +45,10 @@ make -f /usr/share/selinux/devel/Makefile flexnet.pp || exit
 # Generate a man page of the installed module
 sepolicy manpage -p . -d flexnet_t
 # Fixing the file context on /usr/local/bin/lmgrd
-/sbin/restorecon -F -R -v /usr/local/bin/lmgrd
-/sbin/restorecon -F -R -v /usr/local/bin/lmutil
-/sbin/restorecon -F -R -v /usr/local/lib/flexnet
-/sbin/restorecon -F -R -v /usr/local/etc/flexnet
+/sbin/restorecon -F -R -i -v /usr/local/bin/lmgrd
+/sbin/restorecon -F -R -i -v /usr/local/bin/lmutil
+/sbin/restorecon -F -R -i -v /usr/local/lib/flexnet
+/sbin/restorecon -F -R -i -v /usr/local/etc/flexnet
 # Generate a rpm package for the newly generated policy
 
 pwd=$(pwd)

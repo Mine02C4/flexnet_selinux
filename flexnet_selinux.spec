@@ -2,19 +2,21 @@
 
 
 %define relabel_files() \
-restorecon -R /usr/local/bin/lmgrd; \
+restorecon -R -i /usr/local/bin/lmgrd; \
+restorecon -R -i /usr/local/bin/lmutil; \
+restorecon -R -i /usr/local/lib/flexnet; \
+restorecon -R -i /usr/local/etc/flexnet; \
 
 %define selinux_policyver 38.1.11-2
 
 Name:   flexnet_selinux
 Version:	1.0
 Release:	1%{?dist}
-Summary:	SELinux policy module for flexnet
+Summary:	SELinux policy module for FlexNet
 
 Group:	System Environment/Base		
 License:	GPLv2+	
-# This is an example. You will need to change it.
-URL:		http://HOSTNAME
+URL:		https://github.com/Mine02C4/flexnet_selinux
 Source0:	flexnet.pp
 Source1:	flexnet.if
 Source2:	flexnet_selinux.8
@@ -26,7 +28,7 @@ Requires(postun): policycoreutils
 BuildArch: noarch
 
 %description
-This package installs and sets up the  SELinux policy security module for flexnet.
+This package installs and sets up the  SELinux policy security module for FlexNet.
 
 %install
 install -d %{buildroot}%{_datadir}/selinux/packages
@@ -65,6 +67,6 @@ exit 0
 
 
 %changelog
-* Wed Oct 11 2023 YOUR NAME <YOUR@EMAILADDRESS> 1.0-1
+* Wed Oct 11 2023 NIWA Naoya <mine@mine02c4.nagoya> 1.0-1
 - Initial version
 
