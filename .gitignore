@@ -1,2 +1,4 @@
 /*.pp
 /tmp
+*.rpm
+/flexnet_selinux.8
