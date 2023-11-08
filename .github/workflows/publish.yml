@@ -1,0 +1,52 @@
+name: Publish package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    container:
+      image: rockylinux:9-minimal
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+    - name: Install prerequirements
+      run: microdnf install -y selinux-policy-devel tar findutils rpm-build rpm-sign createrepo_c
+    - name: Check out repository code
+      uses: actions/checkout@v4
+    - name: Build SELinux policy
+      run: make -f /usr/share/selinux/devel/Makefile flexnet.pp
+    - name: Generate man page of SELinux policy
+      run: |
+        /usr/sbin/semodule -i flexnet.pp
+        sepolicy manpage -p . -d flexnet_t
+    - name: Build RPM
+      run: |
+        pwd=$(pwd)
+        rpmbuild --define "_sourcedir ${pwd}" --define "_specdir ${pwd}" --define "_builddir ${pwd}" --define "_srcrpmdir ${pwd}" --define "_rpmdir ${pwd}/repo/packages" --define "_buildrootdir ${pwd}/.build" -ba flexnet_selinux.spec
+        rpm_path=$(find ${pwd}/repo/packages -type f -name "*.rpm" -print0 | head -z)
+        echo "rpm_path=${rpm_path}" >> "$GITHUB_ENV"
+    - name: Import GPG key
+      id: import_gpg
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ secrets.SIGN_SECRET }}
+    - name: Sign RPM
+      run: |
+        export GPG_TTY=$(tty)
+        gpg --list-keys --with-subkey-fingerprints
+        rpm --define "%_signature gpg" --define "%_gpg_name ${{ steps.import_gpg.outputs.fingerprint }}" --addsign ${rpm_path}
+    - name: Crate RPM repository
+      run: |
+        pwd=$(pwd)
+        createrepo_c -v ${pwd}/repo/
+    - name: Upload artifacts to GitHub Pages
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: "repo/"
+    - uses: actions/deploy-pages@v2
