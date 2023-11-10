@@ -1,5 +1,7 @@
 name: Build RPM
-on: push
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   build:
