@@ -20,16 +20,19 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v4
     - name: Build SELinux policy
+      working-directory: ./policy
       run: make -f /usr/share/selinux/devel/Makefile flexnet.pp
     - name: Generate man page of SELinux policy
+      working-directory: ./policy
       run: |
         /usr/sbin/semodule -i flexnet.pp
         sepolicy manpage -p . -d flexnet_t
     - name: Build RPM
+      working-directory: ./policy
       run: |
         pwd=$(pwd)
-        rpmbuild --define "_sourcedir ${pwd}" --define "_specdir ${pwd}" --define "_builddir ${pwd}" --define "_srcrpmdir ${pwd}" --define "_rpmdir ${pwd}/repo/packages" --define "_buildrootdir ${pwd}/.build" -ba flexnet_selinux.spec
-        rpm_path=$(find ${pwd}/repo/packages -type f -name "*.rpm" -print0 | head -z)
+        rpmbuild --define "_sourcedir ${pwd}" --define "_specdir ${pwd}" --define "_builddir ${pwd}" --define "_srcrpmdir ${pwd}" --define "_rpmdir ${pwd}/packages" --define "_buildrootdir ${pwd}/.build" -ba flexnet_selinux.spec
+        rpm_path=$(find ${pwd}/packages -type f -name "*.rpm" -print0 | head -z)
         echo "rpm_path=${rpm_path}" >> "$GITHUB_ENV"
     - name: Import GPG key
       id: import_gpg

@@ -1,6 +1,8 @@
 name: Build RPM
 on:
   push:
+    paths:
+      - 'policy/**'
   workflow_dispatch:
 
 jobs:
@@ -14,12 +16,15 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v4
     - name: Build SELinux policy
+      working-directory: ./policy
       run: make -f /usr/share/selinux/devel/Makefile flexnet.pp
     - name: Generate man page of SELinux policy
+      working-directory: ./policy
       run: |
         /usr/sbin/semodule -i flexnet.pp
         sepolicy manpage -p . -d flexnet_t
     - name: Build RPM
+      working-directory: ./policy
       run: |
         pwd=$(pwd)
         rpmbuild --define "_sourcedir ${pwd}" --define "_specdir ${pwd}" --define "_builddir ${pwd}" --define "_srcrpmdir ${pwd}" --define "_rpmdir ${pwd}" --define "_buildrootdir ${pwd}/.build"  -ba flexnet_selinux.spec
@@ -27,4 +32,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Binary RPM
-        path: ./noarch/*.rpm
+        path: ./policy/noarch/*.rpm
