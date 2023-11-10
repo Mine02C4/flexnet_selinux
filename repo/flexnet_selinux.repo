@@ -1,0 +1,6 @@
+[flexnet_selinux]
+name=SELinux policy module for FlexNet
+baseurl=https://mine02c4.github.io/flexnet_selinux/
+gpgkey=https://raw.githubusercontent.com/Mine02C4/flexnet_selinux/main/signature/public.gpg
+enabled=1
+gpgcheck=1
