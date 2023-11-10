@@ -115,7 +115,7 @@ jobs:
     - name: Crate RPM repository
       run: |
         pwd=$(pwd)
-        createrepo_c -v ${pwd}/repo/
+        createrepo_c --repo "SELinux policy module for FlexNet" -v ${pwd}/repo/
     - name: Upload artifacts to GitHub Pages
       uses: actions/upload-pages-artifact@v2
       with:
